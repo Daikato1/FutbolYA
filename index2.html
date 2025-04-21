@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutbolYA! - Encuentra tu partido</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans">
+    <header class="bg-black text-white py-4 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center px-4">
+            <div class="flex items-center mb-4 md:mb-0">
+                <i class="fas fa-futbol text-yellow-500 text-3xl mr-2"></i>
+                <h1 class="text-3xl font-bold">FutbolYA!</h1>
+            </div>
+            <nav class="flex flex-wrap justify-center space-x-2 md:space-x-4">
+                <a class="hover:text-yellow-500 transition duration-300 px-2 py-1" href="/"><i class="fas fa-home mr-1"></i> Inicio</a>
+                <a class="hover:text-yellow-500 transition duration-300 px-2 py-1" href="/matches"><i class="fas fa-calendar-alt mr-1"></i> Partidos</a>
+                <a class="hover:text-yellow-500 transition duration-300 px-2 py-1" href="/teams"><i class="fas fa-users mr-1"></i> Equipos</a>
+                <a class="hover:text-yellow-500 transition duration-300 px-2 py-1" href="/statistics"><i class="fas fa-chart-bar mr-1"></i> Estadísticas</a>
+                <!-- Botones de autenticación -->
+                <a id="login-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded transition duration-300" href="#" onclick="toggleModal('login-modal')"><i class="fas fa-sign-in-alt mr-1"></i> Ingresar</a>
+                <a id="register-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded transition duration-300" href="#" onclick="toggleModal('register-modal')"><i class="fas fa-user-plus mr-1"></i> Registro</a>
+                <!-- Este botón solo aparece cuando el usuario está logueado -->
+                <a id="profile-btn" class="hidden bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded transition duration-300" href="/profile"><i class="fas fa-user mr-1"></i> Mi Perfil</a>
+                <a id="logout-btn" class="hidden bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded transition duration-300" href="#" onclick="logout()"><i class="fas fa-sign-out-alt mr-1"></i> Salir</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Modal de inicio de sesión -->
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Iniciar Sesión</h2>
+                <button onclick="toggleModal('login-modal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login-email" class="block text-gray-700 mb-1">Correo Electrónico:</label>
+                    <input type="email" id="login-email" name="email" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
+                </div>
+                <div>
+                    <label for="login-password" class="block text-gray-700 mb-1">Contraseña:</label>
+                    <input type="password" id="login-password" name="password" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember-me" name="remember-me" class="mr-2">
+                    <label for="remember-me" class="text-gray-700">Recordarme</label>
+                </div>
+                <div class="text-right">
+                    <a href="#" class="text-yellow-500 hover:text-yellow-600 text-sm">¿Olvidaste tu contraseña?</a>
+                </div>
+                <button type="submit" class="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition duration-300">Ingresar</button>
+                <div class="text-center mt-4">
+                    <p class="text-gray-600">¿No tienes cuenta? <a href="#" onclick="toggleModals('login-modal', 'register-modal')" class="text-yellow-500 hover:text-yellow-600">Regístrate aquí</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de registro -->
+    <div id="register-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Crear Cuenta</h2>
+                <button onclick="toggleModal('register-modal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="register-form" class="space-y-4">
+                <div>
+                    <label for="reg-name" class="block text-gray-700 mb-1">Nombre completo:</label>
+                    <input type="text" id="reg-name" name="name" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                </div>
+                <div>
+                    <label for="reg-email" class="block text-gray-700 mb-1">Correo Electrónico:</label>
+                    <input type="email" id="reg-email" name="email" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                </div>
+                <div>
+                    <label for="reg-password" class="block text-gray-700 mb-1">Contraseña:</label>
+                    <input type="password" id="reg-password" name="password" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                </div>
+                <div>
+                    <label for="reg-confirm-password" class="block text-gray-700 mb-1">Confirmar Contraseña:</label>
+                    <input type="password" id="reg-confirm-password" name="confirm-password" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                </div>
+                <div>
+                    <label for="reg-position" class="block text-gray-700 mb-1">Posición preferida:</label>
+                    <select id="reg-position" name="position" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                        <option value="">Selecciona una posición</option>
+                        <option value="portero">Portero</option>
+                        <option value="defensa">Defensa</option>
+                        <option value="mediocampista">Mediocampista</option>
+                        <option value="delantero">Delantero</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="reg-city" class="block text-gray-700 mb-1">Ciudad:</label>
+                    <select id="reg-city" name="city" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                        <option value="">Selecciona una ciudad</option>
+                        <option value="bogota">Bogotá</option>
+                        <option value="medellin">Medellín</option>
+                        <option value="cali">Cali</option>
+                        <option value="barranquilla">Barranquilla</option>
+                        <option value="cartagena">Cartagena</option>
+                        <option value="other">Otra</option>
+                    </select>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="terms" name="terms" class="mr-2" required>
+                    <label for="terms" class="text-gray-700">Acepto los <a href="#" class="text-green-500 hover:text-green-600">términos y condiciones</a></label>
+                </div>
+                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300">Registrarse</button>
+                <div class="text-center mt-4">
+                    <p class="text-gray-600">¿Ya tienes cuenta? <a href="#" onclick="toggleModals('register-modal', 'login-modal')" class="text-green-500 hover:text-green-600">Inicia sesión aquí</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <main>
+        <section id="hero" class="bg-cover bg-center text-white py-20 relative" style="background-image: url('https://source.unsplash.com/random/1600x900/?soccer,football');">
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+            <div class="container mx-auto text-center relative z-10 px-4">
+                <h2 class="text-4xl md:text-5xl font-bold">¡Únete a la Emoción del Fútbol!</h2>
+                <p class="mt-4 text-lg md:text-xl">Organiza y participa en partidos de fútbol en toda Colombia.</p>
+                <div class="mt-8">
+                    <a href="#how-it-works" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 mr-4">¿Cómo Funciona?</a>
+                    <a href="#team-matching" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition duration-300">Encontrar Equipo</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">¿Cómo Funciona?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center p-6 bg-gray-50 rounded-lg shadow-md transition-transform hover:transform hover:scale-105">
+                        <div class="bg-yellow-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user-plus text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">1. Crea tu Perfil</h3>
+                        <p class="text-gray-600">Regístrate y completa tu perfil con tu posición preferida, nivel de habilidad y disponibilidad.</p>
+                    </div>
+                    <div class="text-center p-6 bg-gray-50 rounded-lg shadow-md transition-transform hover:transform hover:scale-105">
+                        <div class="bg-yellow-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-search text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">2. Busca Partidos</h3>
+                        <p class="text-gray-600">Encuentra partidos cercanos a tu ubicación o crea el tuyo propio y espera jugadores.</p>
+                    </div>
+                    <div class="text-center p-6 bg-gray-50 rounded-lg shadow-md transition-transform hover:transform hover:scale-105">
+                        <div class="bg-yellow-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-futbol text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">3. ¡A Jugar!</h3>
+                        <p class="text-gray-600">Coordina con los demás jugadores, disfruta del partido y califica la experiencia.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="team-matching" class="py-16 bg-gradient-to-r from-green-400 to-yellow-500">
+            <div class="container mx-auto text-center px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Emparejamiento de Equipos</h2>
+                <p class="text-white text-lg mb-8">¿Necesitas jugadores para completar tu equipo o buscas un partido para jugar?</p>
+                <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
+                    <button id="create-match" class="bg-white text-green-600 hover:bg-gray-100 py-3 px-6 rounded-lg font-semibold transition duration-300">
+                        <i class="fas fa-plus-circle mr-2"></i>Crear Partido
+                    </button>
+                    <button id="join-match" class="bg-white text-yellow-600 hover:bg-gray-100 py-3 px-6 rounded-lg font-semibold transition duration-300">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Unirse a Partido
+                    </button>
+                    <button id="match-teams" class="bg-black text-white hover:bg-gray-800 py-3 px-6 rounded-lg font-semibold transition duration-300">
+                        <i class="fas fa-users mr-2"></i>Encontrar Equipo
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="upcoming-matches" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-10">Próximos Partidos</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Estos son ejemplos, se llenarían dinámicamente desde el backend -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 transition-transform hover:transform hover:scale-105">
+                        <div class="bg-cover bg-center h-40" style="background-image: url('https://source.unsplash.com/random/400x200/?soccer,stadium')"></div>
+                        <div class="p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold text-lg">Partido 5 vs 5</h3>
+                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Abierto</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2"><i class="fas fa-map-marker-alt mr-1"></i> Parque Simón Bolívar, Bogotá</p>
+                            <p class="text-sm text-gray-600 mb-2"><i class="fas fa-calendar-alt mr-1"></i> 15 de abril, 2025 - 18:00</p>
+                            <p class="text-sm text-gray-600 mb-4"><i class="fas fa-users mr-1"></i> 7/10 jugadores confirmados</p>
+                            <button class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded transition duration-300">Ver Detalles</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 transition-transform hover:transform hover:scale-105">
+                        <div class="bg-cover bg-center h-40" style="background-image: url('https://source.unsplash.com/random/400x200/?football,field')"></div>
+                        <div class="p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold text-lg">Partido 7 vs 7</h3>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Casi Completo</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2"><i class="fas fa-map-marker-alt mr-1"></i> Estadio Atanasio Girardot, Medellín</p>
+                            <p class="text-sm text-gray-600 mb-2"><i class="fas fa-calendar-alt mr-1"></i> 18 de abril, 2025 - 16:30</p>
+                            <p class="text-sm text-gray-600 mb-4"><i class="fas fa-users mr-1"></i> 12/14 jugadores confirmados</p>
+                            <button class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded transition duration-300">Ver Detalles</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 transition-transform hover:transform hover:scale-105">
+                        <div class="bg-cover bg-center h-40" style="background-image: url('https://source.unsplash.com/random/400x200/?soccer,game')"></div>
+                        <div class="p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold text-lg">Partido 11 vs 11</h3>
+                                <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Urgente</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2"><i class="fas fa-map-marker-alt mr-1"></i> Cancha El Campín, Bogotá</p>
+                            <p class="text-sm text-gray-600 mb-2"><i class="fas fa-calendar-alt mr-1"></i> 12 de abril, 2025 - 10:00</p>
+                            <p class="text-sm text-gray-600 mb-4"><i class="fas fa-users mr-1"></i> 15/22 jugadores confirmados</p>
+                            <button class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded transition duration-300">Ver Detalles</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-8">
+                    <a href="/matches" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded transition duration-300">Ver Todos los Partidos</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="statistics" class="py-16 bg-gray-100">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-10">Estadísticas</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <div class="text-yellow-500 text-4xl font-bold mb-2">350+</div>
+                        <p class="text-gray-600">Partidos Organizados</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <div class="text-yellow-500 text-4xl font-bold mb-2">1,200+</div>
+                        <p class="text-gray-600">Jugadores Activos</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <div class="text-yellow-500 text-4xl font-bold mb-2">25+</div>
+                        <p class="text-gray-600">Ciudades</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <div class="text-yellow-500 text-4xl font-bold mb-2">4.8/5</div>
+                        <p class="text-gray-600">Puntuación de Satisfacción</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-black text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">FutbolYA!</h3>
+                    <p class="text-gray-400">La mejor plataforma para encontrar partidos de fútbol en Colombia.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Enlaces Rápidos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-gray-400 hover:text-yellow-500 transition duration-300">Inicio</a></li>
+                        <li><a href="/matches" class="text-gray-400 hover:text-yellow-500 transition duration-300">Partidos</a></li>
+                        <li><a href="/teams" class="text-gray-400 hover:text-yellow-500 transition duration-300">Equipos</a></li>
+                        <li><a href="/statistics" class="text-gray-400 hover:text-yellow-500 transition duration-300">Estadísticas</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/terms" class="text-gray-400 hover:text-yellow-500 transition duration-300">Términos y Condiciones</a></li>
+                        <li><a href="/privacy" class="text-gray-400 hover:text-yellow-500 transition duration-300">Política de Privacidad</a></li>
+                        <li><a href="/cookies" class="text-gray-400 hover:text-yellow-500 transition duration-300">Política de Cookies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contacto</h3>
+                    <ul class="space-y-2">
+                        <li><a href="mailto:info@futbolya.co" class="text-gray-400 hover:text-yellow-500 transition duration-300">info@futbolya.co</a></li>
+                        <li><a href="tel:+573001234567" class="text-gray-400 hover:text-yellow-500 transition duration-300">+57 300 123 4567</a></li>
+                        <li class="flex space-x-4 mt-4">
+                            <a href="#" class="text-gray-400 hover:text-yellow-500 transition duration-300"><i class="fab fa-facebook"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-yellow-500 transition duration-300"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-yellow-500 transition duration-300"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-yellow-500 transition duration-300"><i class="fab fa-youtube"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-6 text-center">
+                <p>&copy; 2025 FutbolYA! Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
