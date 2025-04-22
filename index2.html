@@ -1,11 +1,11 @@
-
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self';">
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Política de seguridad modificada para permitir recursos externos -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https://source.unsplash.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdnjs.cloudflare.com;">
+    
     <title>FutbolYA! - Encuentra tu partido</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
@@ -129,7 +129,7 @@
     </div>
 
     <main>
-        <section id="hero" class="bg-cover bg-center text-white py-20 relative" style="background-image: url('https://source.unsplash.com/random/1600x900/?soccer,football');">
+        <section id="hero" class="bg-cover bg-center text-white py-20 relative" style="background-image: url('img/hero-background.jpg');">
             <div class="absolute inset-0 bg-black opacity-50"></div>
             <div class="container mx-auto text-center relative z-10 px-4">
                 <h2 class="text-4xl md:text-5xl font-bold">¡Únete a la Emoción del Fútbol!</h2>
@@ -194,7 +194,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Estos son ejemplos, se llenarían dinámicamente desde el backend -->
                     <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 transition-transform hover:transform hover:scale-105">
-                        <div class="bg-cover bg-center h-40" style="background-image: url('https://source.unsplash.com/random/400x200/?soccer,stadium')"></div>
+                        <div class="bg-cover bg-center h-40" style="background-image: url('img/match1.jpg')"></div>
                         <div class="p-4">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="font-bold text-lg">Partido 5 vs 5</h3>
@@ -207,7 +207,7 @@
                         </div>
                     </div>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 transition-transform hover:transform hover:scale-105">
-                        <div class="bg-cover bg-center h-40" style="background-image: url('https://source.unsplash.com/random/400x200/?football,field')"></div>
+                        <div class="bg-cover bg-center h-40" style="background-image: url('img/match2.jpg')"></div>
                         <div class="p-4">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="font-bold text-lg">Partido 7 vs 7</h3>
@@ -220,7 +220,7 @@
                         </div>
                     </div>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 transition-transform hover:transform hover:scale-105">
-                        <div class="bg-cover bg-center h-40" style="background-image: url('https://source.unsplash.com/random/400x200/?soccer,game')"></div>
+                        <div class="bg-cover bg-center h-40" style="background-image: url('img/match3.jpg')"></div>
                         <div class="p-4">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="font-bold text-lg">Partido 11 vs 11</h3>
@@ -307,5 +307,40 @@
             </div>
         </div>
     </footer>
+
+    <!-- Script para manejo de modales -->
+    <script>
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevenir scroll
+            } else {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto'; // Restaurar scroll
+            }
+        }
+
+        function toggleModals(closeModalId, openModalId) {
+            toggleModal(closeModalId); // Cerrar el modal actual
+            setTimeout(() => toggleModal(openModalId), 300); // Abrir el nuevo modal con un pequeño retraso
+        }
+
+        // Ejemplo de funcionalidad de login (para demostración)
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Aquí iría la lógica de autenticación
+            alert('Funcionalidad de login en desarrollo');
+            toggleModal('login-modal');
+        });
+
+        // Ejemplo de funcionalidad de registro (para demostración)
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Aquí iría la lógica de registro
+            alert('Funcionalidad de registro en desarrollo');
+            toggleModal('register-modal');
+        });
+    </script>
 </body>
 </html>
